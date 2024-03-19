@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  simple-rag-backend:
+    container_name: simple-rag-backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend/hf_home:/hf_home
+    ports:
+      - '8080:8080'
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  simple-rag-frontend:
+    container_name: simple-rag-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - '8081:8081'
+    depends_on:
+      - simple-rag-backend
